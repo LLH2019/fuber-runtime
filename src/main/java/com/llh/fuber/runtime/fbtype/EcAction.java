@@ -22,24 +22,24 @@ package com.llh.fuber.runtime.fbtype;
 
 public final class EcAction {
 
-private String algorithm = null;
-private String outputEventName = null;
+    private String algorithm = null;
+    private String outputEventName = null;
 
-public EcAction(String alg, String out) {
-    algorithm = alg;
-    outputEventName = out;
-}
+    public EcAction(String alg, String out) {
+        algorithm = alg;
+        outputEventName = out;
+    }
 
-public String getAlgorithm() {
-    return algorithm;
-}
+    public String getAlgorithm() {
+        return algorithm;
+    }
 
-public String getOutput() {
-    return outputEventName;
-}
+    public String getOutput() {
+        return outputEventName;
+    }
 
-@Override
-public String toString() {
+    @Override
+    public String toString() {
     return algorithm + ":" + outputEventName;
 }
 }

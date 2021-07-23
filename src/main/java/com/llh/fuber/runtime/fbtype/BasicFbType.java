@@ -29,59 +29,59 @@ import java.util.Map;
 
 public class BasicFbType extends FbType {
 
-// the Ecc of the type
-private Ecc theEcc = new Ecc();
-// Alogrithms
-// map algorithm name to algorithm text
-private Map<String, Algorithm> algorithms =
-                               new HashMap<String, Algorithm>();
-// map algorithm name to algorithm variables map;
-//private Map algorithmVariablesMap = new HashMap();
+    // the Ecc of the type
+    private Ecc theEcc = new Ecc();
+    // Alogrithms
+    // map algorithm name to algorithm text
+    private Map<String, Algorithm> algorithms =
+                                   new HashMap<String, Algorithm>();
+    // map algorithm name to algorithm variables map;
+    //private Map algorithmVariablesMap = new HashMap();
 
-//==========================================================================
-// instantiate BasicFbType of name n in resource r
-public BasicFbType(String n, Resource r) {
-    Logger.output(Logger.DEBUG1, "BasicFbType(" + n +
-                                 "," + r.getName() + ")");
-    setName(n);
-    resource = r;
-}
-
-//==========================================================================
-public FbInstance createInstance(String name) {
-    Logger.output(Logger.DEBUG1, "BasicFbType.createInstance(" + name + ")");
-
-    String execModel = Runtime.getProperties().getProperty("execModel");
-    BasicFbInstance newInstance = null;
-    if (execModel.toLowerCase().equals("cycl")) {
-        newInstance =
-        new BasicFbInstanceCyclic(name, resource, this);
-    } else if (execModel.toLowerCase().equals("dual")) {
-        newInstance =
-        new BasicFbInstanceDual(name, resource, this);
-    } else if (execModel.toLowerCase().equals("npmtr")) {
-        newInstance =
-        new BasicFbInstanceNpmtr(name, resource, this);
-    } else if (execModel.toLowerCase().equals("seqb")) {
-        newInstance =
-        new BasicFbInstanceSeqBlock(name, resource, this);
-    } else if (execModel.toLowerCase().equals("seqe")) {
-        newInstance =
-        new BasicFbInstanceSeqEvent(name, resource, this);
+    //==========================================================================
+    // instantiate BasicFbType of name n in resource r
+    public BasicFbType(String n, Resource r) {
+        Logger.output(Logger.DEBUG1, "BasicFbType(" + n +
+                                     "," + r.getName() + ")");
+        setName(n);
+        resource = r;
     }
-    addInstance(newInstance);
-    return newInstance;
-}
 
-public Ecc getEcc() {
-    return theEcc;
-}
+    //==========================================================================
+    public FbInstance createInstance(String name) {
+        Logger.output(Logger.DEBUG1, "BasicFbType.createInstance(" + name + ")");
 
-public void addAlgorithm(Algorithm alg) {
-    algorithms.put(alg.getName(), alg);
-}
+        String execModel = Runtime.getProperties().getProperty("execModel");
+        BasicFbInstance newInstance = null;
+        if (execModel.toLowerCase().equals("cycl")) {
+            newInstance =
+            new BasicFbInstanceCyclic(name, resource, this);
+        } else if (execModel.toLowerCase().equals("dual")) {
+            newInstance =
+            new BasicFbInstanceDual(name, resource, this);
+        } else if (execModel.toLowerCase().equals("npmtr")) {
+            newInstance =
+            new BasicFbInstanceNpmtr(name, resource, this);
+        } else if (execModel.toLowerCase().equals("seqb")) {
+            newInstance =
+            new BasicFbInstanceSeqBlock(name, resource, this);
+        } else if (execModel.toLowerCase().equals("seqe")) {
+            newInstance =
+            new BasicFbInstanceSeqEvent(name, resource, this);
+        }
+        addInstance(newInstance);
+        return newInstance;
+    }
 
-public Algorithm getAlgorithm(String name) {
-    return algorithms.get(name);
-}
+    public Ecc getEcc() {
+        return theEcc;
+    }
+
+    public void addAlgorithm(Algorithm alg) {
+        algorithms.put(alg.getName(), alg);
+    }
+
+    public Algorithm getAlgorithm(String name) {
+        return algorithms.get(name);
+    }
 }

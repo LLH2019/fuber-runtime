@@ -27,37 +27,37 @@ import com.llh.fuber.runtime.fbtype.EcState;
 
 public final class BasicFbInstanceCyclic extends BasicFbInstance {
 
-public BasicFbInstanceCyclic(String n, Resource r, BasicFbType t) {
-    super(n, r, t);
-    setLogTag(BasicFbInstanceCyclic.class.getSimpleName() + "(" + n + ")");
-}
+    public BasicFbInstanceCyclic(String n, Resource r, BasicFbType t) {
+        super(n, r, t);
+        setLogTag(BasicFbInstanceCyclic.class.getSimpleName() + "(" + n + ")");
+    }
 
-public synchronized void receiveEvent(String eventInput) {
-    queueEvent(eventInput);
-    Logger.output(Logger.DEBUG2, getLogTag() + ": receive event: " + eventInput);
-}
+    public synchronized void receiveEvent(String eventInput) {
+        queueEvent(eventInput);
+        Logger.output(Logger.DEBUG2, getLogTag() + ": receive event: " + eventInput);
+    }
 
-public synchronized void handleEvent() {
-    while (eventInputQueue.size() > 0) {
-        if (fbType.getName().equals("E_STOP")) {
-            resource.getScheduler().stop();
-            return;
-        }
+    public synchronized void handleEvent() {
+        while (eventInputQueue.size() > 0) {
+            if (fbType.getName().equals("E_STOP")) {
+                resource.getScheduler().stop();
+                return;
+            }
 
-        currentEvent = getNextEvent();
+            currentEvent = getNextEvent();
 
-        Logger.output(Logger.DEBUG2, getLogTag() + ": handling event: " + currentEvent.getName()
-                + ": from Ecc state: " + currentEcState.getName());
+            Logger.output(Logger.DEBUG2, getLogTag() + ": handling event: " + currentEvent.getName()
+                    + ": from Ecc state: " + currentEcState.getName());
 
-        updateVarsForEvent(currentEvent);
+            updateVarsForEvent(currentEvent);
 
-        EcState newEcState = updateEcc();
+            EcState newEcState = updateEcc();
 
-        if (newEcState != null) {
-            Logger.output(Logger.DEBUG2, getLogTag() + ": handling new state: "
-                    + newEcState.getName());
-            handleNewState(newEcState);
+            if (newEcState != null) {
+                Logger.output(Logger.DEBUG2, getLogTag() + ": handling new state: "
+                        + newEcState.getName());
+                handleNewState(newEcState);
+            }
         }
     }
-}
 }

@@ -29,33 +29,33 @@ import java.util.List;
 
 public class EventQueue {
 
-private List<Event> queue = Collections.synchronizedList(new LinkedList<Event>());
+    private List<Event> queue = Collections.synchronizedList(new LinkedList<Event>());
 
-public int size() {
-    return queue.size();
-}
-
-public Event remove() {
-    return queue.remove(0);
-}
-
-public void add(Event e) {
-    queue.add(e);
-}
-
-public List<Event> getQueue() {
-    return queue;
-}
-
-@Override
-public String toString() {
-    String queueString = "";
-    for (Iterator<Event> iter = queue.iterator(); iter.hasNext();) {
-        queueString += iter.next().toString();
-        if (iter.hasNext()) {
-            queueString += ", ";
-        }
+    public int size() {
+        return queue.size();
     }
-    return queueString;
-}
+
+    public Event remove() {
+        return queue.remove(0);
+    }
+
+    public void add(Event e) {
+        queue.add(e);
+    }
+
+    public List<Event> getQueue() {
+        return queue;
+    }
+
+    @Override
+    public String toString() {
+        String queueString = "";
+        for (Iterator<Event> iter = queue.iterator(); iter.hasNext();) {
+            queueString += iter.next().toString();
+            if (iter.hasNext()) {
+                queueString += ", ";
+            }
+        }
+        return queueString;
+    }
 }

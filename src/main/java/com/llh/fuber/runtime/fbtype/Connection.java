@@ -24,19 +24,19 @@ import com.llh.fuber.runtime.instance.FbInstance;
 
 public class Connection {
 
-private FbInstance fbInstance;
-private String signalName;
+    private FbInstance fbInstance;
+    private String signalName;
 
-public Connection(FbInstance fb, String s) {
-    fbInstance = fb;
-    signalName = s;
-}
+    public Connection(FbInstance fb, String s) {
+        fbInstance = fb;
+        signalName = s;
+    }
 
-public FbInstance getFbInstance() {
-    return fbInstance;
-}
+    public FbInstance getFbInstance() {
+        return fbInstance;
+    }
 
-public String getSignalName() {
+    public String getSignalName() {
     return signalName;
 }
 }

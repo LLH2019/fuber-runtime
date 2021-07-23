@@ -28,82 +28,82 @@ import java.util.Map;
 
 public class FbNetwork extends NamedObject {
 
-private Resource resource;
-private Map<String, FbInstance> fbInstances = new HashMap<String, FbInstance>();
+    private Resource resource;
+    private Map<String, FbInstance> fbInstances = new HashMap<String, FbInstance>();
 
-public FbNetwork(Resource res) {
-    resource = res;
-}
-
-public void addFbInstance(String instName, String typeName) {
-    if (resource.getFbType(typeName) != null) {
-        fbInstances.put(instName, resource.getFbType(typeName).
-                createInstance(instName));
-    } else {
-        throw new IllegalArgumentException(instName + ": no FB type: " + typeName + " in resource");
-    }
-}
-
-public FbInstance getFbInstance(String name) {
-    if (fbInstances.get(name) == null) {
-        throw new IllegalArgumentException("No FB instance: " + name);
-    }
-    return fbInstances.get(name);
-}
-
-public void addEventConnection(String source, String dest) {
-
-    String fromInstance = getInstanceName(source);
-    String fromSignal = getSignalName(source);
-    String toInstance = getInstanceName(dest);
-    String toSignal = getSignalName(dest);
-
-    if (fromInstance.equals("")) {
-        Logger.output(Logger.ERROR, "FbNetwork.addEventConnection(): from instance is empty in connection from " + source + " to " + dest);
-    } else if (toInstance.equals("")) {
-        Logger.output(Logger.ERROR, "FbNetwork.addEventConnection(): to instance is empty in connection from " + source + " to " + dest);
-    } else {
-        Logger.output(Logger.DEBUG1, "FbNetwork.addEventConnection: From " + source + " to " + dest);
-        Connection newConn = new Connection(getFbInstance(toInstance), toSignal);
-        getFbInstance(fromInstance).addEventOutputConnection(fromSignal, newConn);
-
+    public FbNetwork(Resource res) {
+        resource = res;
     }
 
-}
-
-public void addDataConnection(String source, String dest) {
-
-    String fromInstance = getInstanceName(source);
-    String fromSignal = getSignalName(source);
-    String toInstance = getInstanceName(dest);
-    String toSignal = getSignalName(dest);
-
-    if (fromInstance.equals("")) {
-        // Constant specification
-        Logger.output(Logger.DEBUG1, "FbNetwork.addDataConnection(): setting data input " + dest + " to " + source);
-        getFbInstance(toInstance).setVariableValue(toSignal, fromSignal);
-    } else if (toInstance.equals("")) {
-        Logger.output(Logger.ERROR, "FbNetwork.addDataConnection(): to instance is empty in connection from " + source + " to " + dest);
-    } else {
-        Logger.output(Logger.DEBUG, "FbNetwork.addDataConnection: From " + source + " to " + dest);
-        Connection newConn = new Connection(getFbInstance(fromInstance), fromSignal);
-        getFbInstance(toInstance).addDataInputConnection(toSignal, newConn);
+    public void addFbInstance(String instName, String typeName) {
+        if (resource.getFbType(typeName) != null) {
+            fbInstances.put(instName, resource.getFbType(typeName).
+                    createInstance(instName));
+        } else {
+            throw new IllegalArgumentException(instName + ": no FB type: " + typeName + " in resource");
+        }
     }
 
-}
-
-private String getInstanceName(String cntSpec) {
-    if (cntSpec.indexOf(".") < 0) {
-        return "";
+    public FbInstance getFbInstance(String name) {
+        if (fbInstances.get(name) == null) {
+            throw new IllegalArgumentException("No FB instance: " + name);
+        }
+        return fbInstances.get(name);
     }
 
-    return cntSpec.substring(0, cntSpec.indexOf("."));
-}
+    public void addEventConnection(String source, String dest) {
 
-private String getSignalName(String cntSpec) {
-    if (cntSpec.indexOf(".") < 0) {
-        return cntSpec;
+        String fromInstance = getInstanceName(source);
+        String fromSignal = getSignalName(source);
+        String toInstance = getInstanceName(dest);
+        String toSignal = getSignalName(dest);
+
+        if (fromInstance.equals("")) {
+            Logger.output(Logger.ERROR, "FbNetwork.addEventConnection(): from instance is empty in connection from " + source + " to " + dest);
+        } else if (toInstance.equals("")) {
+            Logger.output(Logger.ERROR, "FbNetwork.addEventConnection(): to instance is empty in connection from " + source + " to " + dest);
+        } else {
+            Logger.output(Logger.DEBUG1, "FbNetwork.addEventConnection: From " + source + " to " + dest);
+            Connection newConn = new Connection(getFbInstance(toInstance), toSignal);
+            getFbInstance(fromInstance).addEventOutputConnection(fromSignal, newConn);
+
+        }
+
     }
-    return cntSpec.substring(cntSpec.indexOf(".") + 1, cntSpec.length());
-}
+
+    public void addDataConnection(String source, String dest) {
+
+        String fromInstance = getInstanceName(source);
+        String fromSignal = getSignalName(source);
+        String toInstance = getInstanceName(dest);
+        String toSignal = getSignalName(dest);
+
+        if (fromInstance.equals("")) {
+            // Constant specification
+            Logger.output(Logger.DEBUG1, "FbNetwork.addDataConnection(): setting data input " + dest + " to " + source);
+            getFbInstance(toInstance).setVariableValue(toSignal, fromSignal);
+        } else if (toInstance.equals("")) {
+            Logger.output(Logger.ERROR, "FbNetwork.addDataConnection(): to instance is empty in connection from " + source + " to " + dest);
+        } else {
+            Logger.output(Logger.DEBUG, "FbNetwork.addDataConnection: From " + source + " to " + dest);
+            Connection newConn = new Connection(getFbInstance(fromInstance), fromSignal);
+            getFbInstance(toInstance).addDataInputConnection(toSignal, newConn);
+        }
+
+    }
+
+    private String getInstanceName(String cntSpec) {
+        if (cntSpec.indexOf(".") < 0) {
+            return "";
+        }
+
+        return cntSpec.substring(0, cntSpec.indexOf("."));
+    }
+
+    private String getSignalName(String cntSpec) {
+        if (cntSpec.indexOf(".") < 0) {
+            return cntSpec;
+        }
+        return cntSpec.substring(cntSpec.indexOf(".") + 1, cntSpec.length());
+    }
 }

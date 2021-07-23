@@ -25,26 +25,26 @@ import com.llh.fuber.runtime.scheduler.Scheduler;
 
 public class EventExecutingThread extends Thread {
 
-private Scheduler scheduler = null;
+    private Scheduler scheduler = null;
 
-public EventExecutingThread(String name, Scheduler s) {
-    scheduler = s;
-    setName(name);
-}
+    public EventExecutingThread(String name, Scheduler s) {
+        scheduler = s;
+        setName(name);
+    }
 
-@Override
-public void run() {
-    while (true) {
-        FbInstance fbInstance = scheduler.getNextScheduledFbInstance();
-        if (fbInstance == null) {
-            return;
-        }
-        try {
-            fbInstance.handleEvent();
-        } catch (Exception e) {
-            Logger.output(Logger.FATAL, e.getMessage());
-            scheduler.stop();
+    @Override
+    public void run() {
+        while (true) {
+            FbInstance fbInstance = scheduler.getNextScheduledFbInstance();
+            if (fbInstance == null) {
+                return;
+            }
+            try {
+                fbInstance.handleEvent();
+            } catch (Exception e) {
+                Logger.output(Logger.FATAL, e.getMessage());
+                scheduler.stop();
+            }
         }
     }
-}
 }

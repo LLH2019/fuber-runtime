@@ -31,61 +31,61 @@ import java.util.Map;
 
 public class Resource extends NamedObject {
 
-private Scheduler scheduler;
-private Map<String, FbType> fbTypes = new HashMap<String, FbType>();
-private Map<String, FbNetwork> fbNetworks = new HashMap<String, FbNetwork>();
+    private Scheduler scheduler;
+    private Map<String, FbType> fbTypes = new HashMap<String, FbType>();
+    private Map<String, FbNetwork> fbNetworks = new HashMap<String, FbNetwork>();
 
-public Resource(String name) {
-    Logger.output(Logger.DEBUG, "Resource(" + name + ")");
-    setName(name);
-}
+    public Resource(String name) {
+        Logger.output(Logger.DEBUG, "Resource(" + name + ")");
+        setName(name);
+    }
 
-public void run() {
-    Logger.output(Logger.DEBUG, "Resource(" + getName() + ").run()");
-    scheduler.run();
-    // close down service FBs
-    for (var fbType : fbTypes.values()) {
-        if (fbType instanceof ServiceFbType) {
-            for (var fbInstance : fbType.getInstances()) {
-                ((ServiceFbInstance) fbInstance).finalizeService();
+    public void run() {
+        Logger.output(Logger.DEBUG, "Resource(" + getName() + ").run()");
+        scheduler.run();
+        // close down service FBs
+        for (var fbType : fbTypes.values()) {
+            if (fbType instanceof ServiceFbType) {
+                for (var fbInstance : fbType.getInstances()) {
+                    ((ServiceFbInstance) fbInstance).finalizeService();
+                }
             }
         }
     }
-}
 
-public void setScheduler(Scheduler scheduler) {
-    this.scheduler = scheduler;
-}
+    public void setScheduler(Scheduler scheduler) {
+        this.scheduler = scheduler;
+    }
 
-public Scheduler getScheduler() {
-    return scheduler;
-}
+    public Scheduler getScheduler() {
+        return scheduler;
+    }
 
-public void addFbNetwork(String name) {
-    fbNetworks.put(name, new FbNetwork(this));
-}
+    public void addFbNetwork(String name) {
+        fbNetworks.put(name, new FbNetwork(this));
+    }
 
-public FbNetwork getFbNetwork(String name) {
-    return fbNetworks.get(name);
-}
+    public FbNetwork getFbNetwork(String name) {
+        return fbNetworks.get(name);
+    }
 
-public void addBasicFbType(String name) {
-    fbTypes.put(name, new BasicFbType(name, this));
-}
+    public void addBasicFbType(String name) {
+        fbTypes.put(name, new BasicFbType(name, this));
+    }
 
-public void addCompositeFbType(String name) {
-    fbTypes.put(name, new CompositeFbType(name, this));
-}
+    public void addCompositeFbType(String name) {
+        fbTypes.put(name, new CompositeFbType(name, this));
+    }
 
-public void addServiceFbType(String name, File serviceScript) {
-    fbTypes.put(name, new ServiceFbType(name, this, serviceScript));
-}
+    public void addServiceFbType(String name, File serviceScript) {
+        fbTypes.put(name, new ServiceFbType(name, this, serviceScript));
+    }
 
-public FbType getFbType(String name) {
-    return fbTypes.get(name);
-}
+    public FbType getFbType(String name) {
+        return fbTypes.get(name);
+    }
 
-public Collection<FbType> getFbTypes() {
-    return fbTypes.values();
-}
+    public Collection<FbType> getFbTypes() {
+        return fbTypes.values();
+    }
 }

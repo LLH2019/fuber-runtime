@@ -26,25 +26,25 @@ import com.llh.fuber.runtime.variable.Variables;
 
 public class Job {
 
-private FbInstance fbInstance = null;
-private Algorithm theAlgorithm = null;
-private Variables theVariables = null;
+    private FbInstance fbInstance = null;
+    private Algorithm theAlgorithm = null;
+    private Variables theVariables = null;
 
-public Job(FbInstance i, Algorithm a, Variables v) {
-    fbInstance = i;
-    theAlgorithm = a;
-    theVariables = v;
-}
+    public Job(FbInstance i, Algorithm a, Variables v) {
+        fbInstance = i;
+        theAlgorithm = a;
+        theVariables = v;
+    }
 
-public FbInstance getInstance() {
-    return fbInstance;
-}
+    public FbInstance getInstance() {
+        return fbInstance;
+    }
 
-public Algorithm getAlgorithm() {
-    return theAlgorithm;
-}
+    public Algorithm getAlgorithm() {
+        return theAlgorithm;
+    }
 
-public Variables getVariables() {
-    return theVariables;
-}
+    public Variables getVariables() {
+        return theVariables;
+    }
 }

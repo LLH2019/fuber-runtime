@@ -27,48 +27,48 @@ import com.llh.fuber.runtime.fbtype.EcState;
 
 public final class BasicFbInstanceNpmtr extends BasicFbInstance {
 
-private boolean handlingEvent = false;
+    private boolean handlingEvent = false;
 
-public BasicFbInstanceNpmtr(String name, Resource resource, BasicFbType type) {
-    super(name, resource, type);
-    setLogTag(BasicFbInstanceNpmtr.class.getSimpleName() + "(" + name + ")");
-}
-
-public synchronized void receiveEvent(String eventInput) {
-    if (fbType.getName().equals("E_STOP")) {
-        Logger.output(Logger.INFO, getLogTag() + ": STOP event");
-        System.exit(0);
+    public BasicFbInstanceNpmtr(String name, Resource resource, BasicFbType type) {
+        super(name, resource, type);
+        setLogTag(BasicFbInstanceNpmtr.class.getSimpleName() + "(" + name + ")");
     }
 
-    queueEvent(eventInput);
+    public synchronized void receiveEvent(String eventInput) {
+        if (fbType.getName().equals("E_STOP")) {
+            Logger.output(Logger.INFO, getLogTag() + ": STOP event");
+            System.exit(0);
+        }
 
-    if (!handlingEvent) {
-        handlingEvent = true;
+        queueEvent(eventInput);
 
-        Logger.output(Logger.DEBUG2, getLogTag() + ": receive event: " + eventInput);
+        if (!handlingEvent) {
+            handlingEvent = true;
 
-        handleEvent();
+            Logger.output(Logger.DEBUG2, getLogTag() + ": receive event: " + eventInput);
 
-        handlingEvent = false;
-    } else {
-        Logger.output(Logger.DEBUG1, getLogTag() + ": scheduling this FB instance");
-        resource.getScheduler().scheduleFbInstance(this);
+            handleEvent();
+
+            handlingEvent = false;
+        } else {
+            Logger.output(Logger.DEBUG1, getLogTag() + ": scheduling this FB instance");
+            resource.getScheduler().scheduleFbInstance(this);
+        }
     }
-}
 
-public void handleEvent() {
-    currentEvent = getNextEvent();
+    public void handleEvent() {
+        currentEvent = getNextEvent();
 
-    Logger.output(Logger.DEBUG2, getLogTag() + ": handling event: " + currentEvent.getName()
-            + ": from Ecc state: " + currentEcState.getName());
+        Logger.output(Logger.DEBUG2, getLogTag() + ": handling event: " + currentEvent.getName()
+                + ": from Ecc state: " + currentEcState.getName());
 
-    updateVarsForEvent(currentEvent);
+        updateVarsForEvent(currentEvent);
 
-    EcState newEcState = updateEcc();
+        EcState newEcState = updateEcc();
 
-    if (newEcState != null) {
-        Logger.output(Logger.DEBUG2, getLogTag() + ": handling new state: " + newEcState.getName());
-        handleNewState(newEcState);
+        if (newEcState != null) {
+            Logger.output(Logger.DEBUG2, getLogTag() + ": handling new state: " + newEcState.getName());
+            handleNewState(newEcState);
+        }
     }
-}
 }

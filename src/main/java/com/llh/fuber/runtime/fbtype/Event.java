@@ -29,39 +29,39 @@ import java.util.Map;
 
 public final class Event extends NamedObject {
 
-// maps with data name to buffered variable
-private Map<String, Variable> withData = new HashMap<String, Variable>();
+    // maps with data name to buffered variable
+    private Map<String, Variable> withData = new HashMap<String, Variable>();
 
-public Event(String n) {
-    setName(n);
-}
-
-public void addWithData(String dataVarName) {
-    withData.put(dataVarName, null);
-}
-
-public void addWithDataVariable(String name, Variable dataVar) {
-    withData.put(name, dataVar);
-}
-
-public Variable getWithDataVariable(String name) {
-    return withData.get(name);
-}
-
-public Collection<String> getWithDataNames() {
-    return withData.keySet();
-}
-
-public Event clone() {
-    Event newEvent = new Event(getName());
-    for (var name : getWithDataNames()) {
-        newEvent.addWithData(name);
+    public Event(String n) {
+        setName(n);
     }
-    return newEvent;
-}
 
-@Override
-public String toString() {
+    public void addWithData(String dataVarName) {
+        withData.put(dataVarName, null);
+    }
+
+    public void addWithDataVariable(String name, Variable dataVar) {
+        withData.put(name, dataVar);
+    }
+
+    public Variable getWithDataVariable(String name) {
+        return withData.get(name);
+    }
+
+    public Collection<String> getWithDataNames() {
+        return withData.keySet();
+    }
+
+    public Event clone() {
+        Event newEvent = new Event(getName());
+        for (var name : getWithDataNames()) {
+            newEvent.addWithData(name);
+        }
+        return newEvent;
+    }
+
+    @Override
+    public String toString() {
     return getName();
 }
 }

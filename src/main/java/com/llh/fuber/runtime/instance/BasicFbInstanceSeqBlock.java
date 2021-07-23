@@ -27,46 +27,46 @@ import com.llh.fuber.runtime.fbtype.EcState;
 
 public final class BasicFbInstanceSeqBlock extends BasicFbInstance {
 
-private boolean queuedInScheduler = false;
+    private boolean queuedInScheduler = false;
 
-public BasicFbInstanceSeqBlock(String n, Resource r, BasicFbType t) {
-    super(n, r, t);
-    setLogTag(BasicFbInstanceSeqBlock.class.getSimpleName() + "(" + n + ")");
-}
-
-public synchronized void receiveEvent(String eventInput) {
-    queueEvent(eventInput);
-
-    Logger.output(Logger.DEBUG2, getLogTag() + ": receive event: " + eventInput);
-
-    if (!queuedInScheduler) {
-        Logger.output(Logger.DEBUG3, getLogTag() + ": scheduling this FB instance");
-        resource.getScheduler().scheduleFbInstance(this);
-        queuedInScheduler = true;
+    public BasicFbInstanceSeqBlock(String n, Resource r, BasicFbType t) {
+        super(n, r, t);
+        setLogTag(BasicFbInstanceSeqBlock.class.getSimpleName() + "(" + n + ")");
     }
-}
 
-public synchronized void handleEvent() {
+    public synchronized void receiveEvent(String eventInput) {
+        queueEvent(eventInput);
 
-    queuedInScheduler = false;
+        Logger.output(Logger.DEBUG2, getLogTag() + ": receive event: " + eventInput);
 
-    while (eventInputQueue.size() > 0) {
-        EcState newEcState = null;
-
-        currentEvent = getNextEvent();
-
-        Logger.output(Logger.DEBUG2, getLogTag() + ": handling event: " + currentEvent.getName()
-                + ": from Ecc state: " + currentEcState.getName());
-
-        updateVarsForEvent(currentEvent);
-
-        newEcState = updateEcc();
-
-        if (newEcState != null) {
-            Logger.output(Logger.DEBUG2, getLogTag() + ": handling new state: "
-                    + newEcState.getName());
-            handleNewState(newEcState);
+        if (!queuedInScheduler) {
+            Logger.output(Logger.DEBUG3, getLogTag() + ": scheduling this FB instance");
+            resource.getScheduler().scheduleFbInstance(this);
+            queuedInScheduler = true;
         }
     }
-}
+
+    public synchronized void handleEvent() {
+
+        queuedInScheduler = false;
+
+        while (eventInputQueue.size() > 0) {
+            EcState newEcState = null;
+
+            currentEvent = getNextEvent();
+
+            Logger.output(Logger.DEBUG2, getLogTag() + ": handling event: " + currentEvent.getName()
+                    + ": from Ecc state: " + currentEcState.getName());
+
+            updateVarsForEvent(currentEvent);
+
+            newEcState = updateEcc();
+
+            if (newEcState != null) {
+                Logger.output(Logger.DEBUG2, getLogTag() + ": handling new state: "
+                        + newEcState.getName());
+                handleNewState(newEcState);
+            }
+        }
+    }
 }

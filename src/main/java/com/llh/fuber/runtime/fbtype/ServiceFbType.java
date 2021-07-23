@@ -30,25 +30,25 @@ import java.io.File;
 
 public class ServiceFbType extends FbType {
 
-private File serviceScript;
+    private File serviceScript;
 
-public ServiceFbType(String n, Resource r, File s) {
-    Logger.output(Logger.DEBUG, "ServiceFbType(" + n + "," + r.getName() + ")");
-    setName(n);
-    resource = r;
-    serviceScript = s;
-}
-//====================================================================================
+    public ServiceFbType(String n, Resource r, File s) {
+        Logger.output(Logger.DEBUG, "ServiceFbType(" + n + "," + r.getName() + ")");
+        setName(n);
+        resource = r;
+        serviceScript = s;
+    }
+    //====================================================================================
 
-public FbInstance createInstance(String name) {
-    Logger.output(Logger.DEBUG, "ServiceFbType.createInstace(" + name + ")");
-    ServiceFbInstance newInstance = new ServiceFbInstance(name, resource, this, serviceScript);
+    public FbInstance createInstance(String name) {
+        Logger.output(Logger.DEBUG, "ServiceFbType.createInstace(" + name + ")");
+        ServiceFbInstance newInstance = new ServiceFbInstance(name, resource, this, serviceScript);
 
-    newInstance.setVariables(variables.clone());
-    newInstance.initializeService();
+        newInstance.setVariables(variables.clone());
+        newInstance.initializeService();
 
-    addInstance(newInstance);
+        addInstance(newInstance);
 
-    return newInstance;
-}
+        return newInstance;
+    }
 }

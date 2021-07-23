@@ -22,29 +22,29 @@ package com.llh.fuber.runtime.fbtype;
 
 public final class EcTransition {
 
-private EcState source;
-private EcState destination;
-private EcCondition condition;
+    private EcState source;
+    private EcState destination;
+    private EcCondition condition;
 
-public EcTransition(EcState source, EcState destination, EcCondition condition) {
-    this.source = source;
-    this.destination = destination;
-    this.condition = condition;
-}
+    public EcTransition(EcState source, EcState destination, EcCondition condition) {
+        this.source = source;
+        this.destination = destination;
+        this.condition = condition;
+    }
 
-public EcState getSource() {
-    return source;
-}
+    public EcState getSource() {
+        return source;
+    }
 
-public EcState getDestination() {
-    return destination;
-}
+    public EcState getDestination() {
+        return destination;
+    }
 
-public EcCondition getCondition() {
-    return condition;
-}
+    public EcCondition getCondition() {
+        return condition;
+    }
 
-public void setCondition(EcCondition cond) {
+    public void setCondition(EcCondition cond) {
     this.condition = cond;
 }
 }

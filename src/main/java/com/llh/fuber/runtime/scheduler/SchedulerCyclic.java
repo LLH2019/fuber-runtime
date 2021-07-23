@@ -28,46 +28,46 @@ import java.util.List;
 
 public final class SchedulerCyclic extends Scheduler {
 
-private List<FbInstance> instances = new LinkedList<FbInstance>();
+    private List<FbInstance> instances = new LinkedList<FbInstance>();
 
-public SchedulerCyclic(Resource resource) {
-    this.resource= resource;
+    public SchedulerCyclic(Resource resource) {
+        this.resource= resource;
 
-    setName(SchedulerCyclic.class.getSimpleName() + "(" + resource.getName() + ")");
-    setLogTag(getName());
+        setName(SchedulerCyclic.class.getSimpleName() + "(" + resource.getName() + ")");
+        setLogTag(getName());
 
-    Logger.output(Logger.DEBUG, getLogTag());
-}
+        Logger.output(Logger.DEBUG, getLogTag());
+    }
 
-public synchronized void run() {
-    Logger.output(Logger.INFO, getLogTag() + ".run()");
-    Logger.hLine(Logger.INFO);
+    public synchronized void run() {
+        Logger.output(Logger.INFO, getLogTag() + ".run()");
+        Logger.hLine(Logger.INFO);
 
-    for (var type : resource.getFbTypes()) {
-        if (!(type instanceof CompositeFbType)) {
-            for (var instance : type.getInstances()) {
-                instances.add(instance);    
+        for (var type : resource.getFbTypes()) {
+            if (!(type instanceof CompositeFbType)) {
+                for (var instance : type.getInstances()) {
+                    instances.add(instance);
+                }
+            }
+        }
+
+        send_restart_event();
+
+        while (true) {
+            for (var instance : instances) {
+                instance.handleEvent();
+                if (doStop) {
+                    Logger.output(Logger.INFO, getLogTag() + ": STOP event");
+                    return;
+                }
             }
         }
     }
 
-    send_restart_event();
-
-    while (true) {
-        for (var instance : instances) {
-            instance.handleEvent();
-            if (doStop) {
-                Logger.output(Logger.INFO, getLogTag() + ": STOP event");
-                return;
-            }
-        }
+    public FbInstance getNextScheduledFbInstance() {
+        return null;
     }
-}
 
-public FbInstance getNextScheduledFbInstance() {
-    return null;
-}
-
-public void scheduleFbInstance(FbInstance fbInst) {
-}
+    public void scheduleFbInstance(FbInstance fbInst) {
+    }
 }

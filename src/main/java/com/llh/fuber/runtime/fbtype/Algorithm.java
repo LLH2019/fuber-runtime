@@ -25,5 +25,5 @@ import com.llh.fuber.runtime.variable.Variables;
 
 public abstract class Algorithm extends NamedObject {
 
-public abstract void execute(Variables variables) throws Exception;
+    public abstract void execute(Variables variables) throws Exception;
 }

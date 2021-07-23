@@ -27,82 +27,82 @@ import com.llh.fuber.runtime.fbtype.EcState;
 
 public final class BasicFbInstanceDual extends BasicFbInstance {
 
-// profiling fields
-public long eventStartTime;
-public long eventTime;
-public long algorithmTime;
-public long totalTime;
-public long finishTime;
-public static long allTime;
-public static long allEventTime;
-public static long allAlgorithmTime;
-public static int count;
+    // profiling fields
+    public long eventStartTime;
+    public long eventTime;
+    public long algorithmTime;
+    public long totalTime;
+    public long finishTime;
+    public static long allTime;
+    public static long allEventTime;
+    public static long allAlgorithmTime;
+    public static int count;
 
-private boolean queuedInScheduler = false;
+    private boolean queuedInScheduler = false;
 
-public BasicFbInstanceDual(String n, Resource r, BasicFbType t) {
-    super(n, r, t);
-    setLogTag(BasicFbInstanceDual.class.getSimpleName() + "(" + n + ")");
-}
-
-public synchronized void receiveEvent(String eventInput) {
-    eventStartTime = System.nanoTime();
-
-    queueEvent(eventInput);
-
-    Logger.output(Logger.DEBUG2, getLogTag() + ": receive event: " + eventInput);
-
-    if (!queuedInScheduler) {
-        Logger.output(Logger.DEBUG1, getLogTag() + ": scheduling this FB instance");
-        resource.getScheduler().scheduleFbInstance(this);
-        queuedInScheduler = true;
+    public BasicFbInstanceDual(String n, Resource r, BasicFbType t) {
+        super(n, r, t);
+        setLogTag(BasicFbInstanceDual.class.getSimpleName() + "(" + n + ")");
     }
-}
 
-public synchronized void handleEvent() {
-    queuedInScheduler = false;
+    public synchronized void receiveEvent(String eventInput) {
+        eventStartTime = System.nanoTime();
 
-    // step through the event queue until there's change in Ecc state
-    EcState newEcState = null;
-    do {
-        currentEvent = getNextEvent();
+        queueEvent(eventInput);
 
-        Logger.output(Logger.DEBUG2, getLogTag() + "handling event: " + currentEvent.getName()
-                + ": from Ecc state: " + currentEcState.getName());
+        Logger.output(Logger.DEBUG2, getLogTag() + ": receive event: " + eventInput);
 
-        updateVarsForEvent(currentEvent);
+        if (!queuedInScheduler) {
+            Logger.output(Logger.DEBUG1, getLogTag() + ": scheduling this FB instance");
+            resource.getScheduler().scheduleFbInstance(this);
+            queuedInScheduler = true;
+        }
+    }
 
-        newEcState = updateEcc();
+    public synchronized void handleEvent() {
+        queuedInScheduler = false;
 
-    } while (newEcState == null && eventInputQueue.size() > 0);
+        // step through the event queue until there's change in Ecc state
+        EcState newEcState = null;
+        do {
+            currentEvent = getNextEvent();
 
-    // new Ecc state is entered
-    Logger.output(Logger.DEBUG2, getLogTag() + ": handling new state: " + newEcState.getName());
-    handleNewState(newEcState);
-}
+            Logger.output(Logger.DEBUG2, getLogTag() + "handling event: " + currentEvent.getName()
+                    + ": from Ecc state: " + currentEcState.getName());
 
-// handles currentEcState between actions
-@Override
-public void handleState() {
-    if (actionsIterator.hasNext()) {
-        handleAction(actionsIterator.next());
-    } else {
-        // repeat the handling of the state if state is changed
-        Logger.output(Logger.DEBUG2, getLogTag() + ": no more actions in state: "
-                + currentEcState.getName());
-        EcState newEcState = updateEcc();
-        if (newEcState != null) {
-            handleNewState(newEcState);
+            updateVarsForEvent(currentEvent);
+
+            newEcState = updateEcc();
+
+        } while (newEcState == null && eventInputQueue.size() > 0);
+
+        // new Ecc state is entered
+        Logger.output(Logger.DEBUG2, getLogTag() + ": handling new state: " + newEcState.getName());
+        handleNewState(newEcState);
+    }
+
+    // handles currentEcState between actions
+    @Override
+    public void handleState() {
+        if (actionsIterator.hasNext()) {
+            handleAction(actionsIterator.next());
         } else {
-            Logger.output(Logger.DEBUG2, getLogTag() + ": done with event :"
-                    + currentEvent.getName() + ": and in EcState: " + currentEcState.getName());
-            // if there are more events left schedule the block again
-            if (!queuedInScheduler && eventInputQueue.size() > 0) {
-                Logger.output(Logger.DEBUG1, getLogTag() + ": scheduling this FB instance.");
-                resource.getScheduler().scheduleFbInstance(this);
-                queuedInScheduler = true;
+            // repeat the handling of the state if state is changed
+            Logger.output(Logger.DEBUG2, getLogTag() + ": no more actions in state: "
+                    + currentEcState.getName());
+            EcState newEcState = updateEcc();
+            if (newEcState != null) {
+                handleNewState(newEcState);
+            } else {
+                Logger.output(Logger.DEBUG2, getLogTag() + ": done with event :"
+                        + currentEvent.getName() + ": and in EcState: " + currentEcState.getName());
+                // if there are more events left schedule the block again
+                if (!queuedInScheduler && eventInputQueue.size() > 0) {
+                    Logger.output(Logger.DEBUG1, getLogTag() + ": scheduling this FB instance.");
+                    resource.getScheduler().scheduleFbInstance(this);
+                    queuedInScheduler = true;
+                }
             }
         }
     }
-}
 }

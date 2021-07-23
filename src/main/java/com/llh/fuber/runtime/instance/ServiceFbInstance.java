@@ -33,83 +33,26 @@ import java.io.Reader;
 
 public class ServiceFbInstance extends FbInstance {
 
-private File serviceScript;
-private Object serviceState;
-private Interpreter interpreter = new Interpreter();
-private EventQueue eventInputQueue = new EventQueue();
+    private File serviceScript;
+    private Object serviceState;
+    private Interpreter interpreter = new Interpreter();
+    private EventQueue eventInputQueue = new EventQueue();
 
-public ServiceFbInstance(String name, Resource resource, ServiceFbType fbType, File script) {
-    setName(name);
-    setLogTag(ServiceFbInstance.class.getSimpleName() + "(" + name + ")");
-    this.resource = resource;
-    this.fbType = fbType;
-    serviceScript = script;
-}
-
-public void initializeService() {
-    try {
-        interpreter.set("serviceInitialize", true);
-        interpreter.set("serviceFinalize", false);
-        interpreter.set("serviceFb", this);
-        interpreter.set("serviceState", null);
-        interpreter.set("serviceEvent", null);
-        interpreter.set("serviceVariables", variables);
-
-        // evaluate the serviceScript
-        Reader serviceScriptReader = new FileReader(serviceScript);
-        interpreter.eval(serviceScriptReader);
-
-        serviceState = interpreter.get("serviceState");
-        interpreter.set("serviceInitialize", false);
-    } catch (Exception e) {
-        throw new IllegalArgumentException("Unable to evaluate service bsh script: "
-                + e.getMessage());
-    }
-}
-
-public void finalizeService() {
-    try {
-        interpreter.set("serviceFinalize", true);
-        interpreter.set("serviceState", serviceState);
-
-        // evaluate the serviceScript
-        Reader serviceScriptReader = new FileReader(serviceScript);
-        interpreter.eval(serviceScriptReader);
-    } catch (Exception e) {
-        throw new IllegalArgumentException("Unable to evaluate service bsh script: "
-                + e.getMessage());
-    }
-}
-
-public synchronized void receiveEvent(String eventInput) {
-    if (!variables.getVariable(eventInput).getRole().equals(VariableRole.EVENT_INPUT)) {
-        throw new IllegalArgumentException("No event input " + eventInput);
+    public ServiceFbInstance(String name, Resource resource, ServiceFbType fbType, File script) {
+        setName(name);
+        setLogTag(ServiceFbInstance.class.getSimpleName() + "(" + name + ")");
+        this.resource = resource;
+        this.fbType = fbType;
+        serviceScript = script;
     }
 
-    Logger.output(Logger.DEBUG, getLogTag() + ".receiveEvent(" + eventInput + ")");
-
-    Event newEvent = fbType.getEvent(eventInput).clone();
-    getDataInputs(newEvent);
-    eventInputQueue.add(newEvent);
-
-    resource.getScheduler().scheduleFbInstance(this);
-}
-
-public synchronized void handleEvent() {
-    Logger.output(Logger.DEBUG, getLogTag() + ".handleEvent()");
-
-    if (eventInputQueue.size() > 0) {
-        currentEvent = getNextEvent();
-
-        Logger.output(Logger.DEBUG, getLogTag() + ".handleEvent(): handling event "
-                + currentEvent.getName());
-
-        updateVarsForEvent(currentEvent);
-
+    public void initializeService() {
         try {
+            interpreter.set("serviceInitialize", true);
+            interpreter.set("serviceFinalize", false);
             interpreter.set("serviceFb", this);
-            interpreter.set("serviceState", serviceState);
-            interpreter.set("serviceEvent", currentEvent);
+            interpreter.set("serviceState", null);
+            interpreter.set("serviceEvent", null);
             interpreter.set("serviceVariables", variables);
 
             // evaluate the serviceScript
@@ -117,19 +60,76 @@ public synchronized void handleEvent() {
             interpreter.eval(serviceScriptReader);
 
             serviceState = interpreter.get("serviceState");
-            variables = (Variables) interpreter.get("serviceVariables");
+            interpreter.set("serviceInitialize", false);
         } catch (Exception e) {
             throw new IllegalArgumentException("Unable to evaluate service bsh script: "
                     + e.getMessage());
+        }
     }
+
+    public void finalizeService() {
+        try {
+            interpreter.set("serviceFinalize", true);
+            interpreter.set("serviceState", serviceState);
+
+            // evaluate the serviceScript
+            Reader serviceScriptReader = new FileReader(serviceScript);
+            interpreter.eval(serviceScriptReader);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Unable to evaluate service bsh script: "
+                    + e.getMessage());
+        }
     }
-}
 
-public Object getServiceState() {
-    return serviceState;
-}
+    public synchronized void receiveEvent(String eventInput) {
+        if (!variables.getVariable(eventInput).getRole().equals(VariableRole.EVENT_INPUT)) {
+            throw new IllegalArgumentException("No event input " + eventInput);
+        }
 
-private Event getNextEvent() {
-    return eventInputQueue.remove();
-}
+        Logger.output(Logger.DEBUG, getLogTag() + ".receiveEvent(" + eventInput + ")");
+
+        Event newEvent = fbType.getEvent(eventInput).clone();
+        getDataInputs(newEvent);
+        eventInputQueue.add(newEvent);
+
+        resource.getScheduler().scheduleFbInstance(this);
+    }
+
+    public synchronized void handleEvent() {
+        Logger.output(Logger.DEBUG, getLogTag() + ".handleEvent()");
+
+        if (eventInputQueue.size() > 0) {
+            currentEvent = getNextEvent();
+
+            Logger.output(Logger.DEBUG, getLogTag() + ".handleEvent(): handling event "
+                    + currentEvent.getName());
+
+            updateVarsForEvent(currentEvent);
+
+            try {
+                interpreter.set("serviceFb", this);
+                interpreter.set("serviceState", serviceState);
+                interpreter.set("serviceEvent", currentEvent);
+                interpreter.set("serviceVariables", variables);
+
+                // evaluate the serviceScript
+                Reader serviceScriptReader = new FileReader(serviceScript);
+                interpreter.eval(serviceScriptReader);
+
+                serviceState = interpreter.get("serviceState");
+                variables = (Variables) interpreter.get("serviceVariables");
+            } catch (Exception e) {
+                throw new IllegalArgumentException("Unable to evaluate service bsh script: "
+                        + e.getMessage());
+        }
+        }
+    }
+
+    public Object getServiceState() {
+        return serviceState;
+    }
+
+    private Event getNextEvent() {
+        return eventInputQueue.remove();
+    }
 }

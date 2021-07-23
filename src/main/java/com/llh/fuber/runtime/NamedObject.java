@@ -22,22 +22,22 @@ package com.llh.fuber.runtime;
 
 public class NamedObject {
 
-private String name = "Unnamed";
-private String logTag = "Untagged";
+    private String name = "Unnamed";
+    private String logTag = "Untagged";
 
-public void setName(String n) {
-    name = n;
-}
+    public void setName(String n) {
+        name = n;
+    }
 
-public String getName() {
-    return name;
-}
+    public String getName() {
+        return name;
+    }
 
-public void setLogTag(String tag) {
-    logTag = tag;
-}
+    public void setLogTag(String tag) {
+        logTag = tag;
+    }
 
-public String getLogTag() {
-    return logTag;
-}
+    public String getLogTag() {
+        return logTag;
+    }
 }

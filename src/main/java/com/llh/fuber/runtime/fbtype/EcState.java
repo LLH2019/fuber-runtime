@@ -28,26 +28,26 @@ import java.util.List;
 
 public final class EcState extends NamedObject {
 
-private List<EcAction> ecActions = new LinkedList<EcAction>();
+    private List<EcAction> ecActions = new LinkedList<EcAction>();
 
-public EcState(String name) {
-    setName(name);
-}
+    public EcState(String name) {
+        setName(name);
+    }
 
-public void addAction(String alg, String evout) {
-    ecActions.add(new EcAction(alg, evout));
-}
+    public void addAction(String alg, String evout) {
+        ecActions.add(new EcAction(alg, evout));
+    }
 
-public int getNumberOfActions() {
-    return ecActions.size();
-}
+    public int getNumberOfActions() {
+        return ecActions.size();
+    }
 
-public Iterator<EcAction> actionsIterator() {
-    return ecActions.iterator();
-}
+    public Iterator<EcAction> actionsIterator() {
+        return ecActions.iterator();
+    }
 
-@Override
-public String toString() {
+    @Override
+    public String toString() {
     return getName();
 }
 }

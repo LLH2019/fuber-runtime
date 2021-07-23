@@ -25,26 +25,26 @@ import java.util.Map;
 
 public class Device extends NamedObject {
 
-private Map<String, Resource> resources = new HashMap<String, Resource>();
+    private Map<String, Resource> resources = new HashMap<String, Resource>();
 
-public Device(String name) {
-    setName(name);
-    setLogTag("Device(" + getName() + ")");
-    Logger.output(Logger.DEBUG, getLogTag());
-}
-
-public void run() {
-    Logger.output(Logger.DEBUG, getLogTag() + ".run()");
-    for (var resource : resources.values()) {
-        resource.run();
+    public Device(String name) {
+        setName(name);
+        setLogTag("Device(" + getName() + ")");
+        Logger.output(Logger.DEBUG, getLogTag());
     }
-}
 
-public void addResource(String name, Resource res) {
-    resources.put(name, res);
-}
+    public void run() {
+        Logger.output(Logger.DEBUG, getLogTag() + ".run()");
+        for (var resource : resources.values()) {
+            resource.run();
+        }
+    }
 
-public Resource getResource(String name) {
-    return resources.get(name);
-}
+    public void addResource(String name, Resource res) {
+        resources.put(name, res);
+    }
+
+    public Resource getResource(String name) {
+        return resources.get(name);
+    }
 }

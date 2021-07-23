@@ -29,41 +29,41 @@ import com.llh.fuber.runtime.instance.FbInstance;
 
 public abstract class Scheduler extends NamedObject {
 
-public Resource resource;
-public boolean doStop = false;
+    public Resource resource;
+    public boolean doStop = false;
 
-public void send_restart_event() {
-    // find all E_RESTART COLD connections and queue events on them
-    for (var restartInstance : resource.getFbType("E_RESTART").getInstances()) {
-        restartInstance.sendEvent("COLD");
+    public void send_restart_event() {
+        // find all E_RESTART COLD connections and queue events on them
+        for (var restartInstance : resource.getFbType("E_RESTART").getInstances()) {
+            restartInstance.sendEvent("COLD");
+        }
     }
-}
 
-public abstract void run();
+    public abstract void run();
 
-public synchronized void stop() {
-    Logger.output(Logger.DEBUG, getLogTag() + ".stop()");
-    doStop = true;
-    notifyAll();
-}
-
-public abstract FbInstance getNextScheduledFbInstance();
-
-public abstract void scheduleFbInstance(FbInstance fbInst);
-
-public void scheduleJob(Job job) {
-    executeJob(job);
-}
-
-public void executeJob(Job job) {
-    try {
-        job.getAlgorithm().execute(job.getVariables());
-    } catch (Exception e) {
-        Logger.output(Logger.FATAL, job.getInstance().getName() + ": cannot evaluate algorithm: "
-                + job.getAlgorithm().getName() + System.getProperty("line.separator") + "\t"
-                + e.getMessage());
-        stop();
+    public synchronized void stop() {
+        Logger.output(Logger.DEBUG, getLogTag() + ".stop()");
+        doStop = true;
+        notifyAll();
     }
-    ((BasicFbInstance) job.getInstance()).finishedJob(job);
-}
+
+    public abstract FbInstance getNextScheduledFbInstance();
+
+    public abstract void scheduleFbInstance(FbInstance fbInst);
+
+    public void scheduleJob(Job job) {
+        executeJob(job);
+    }
+
+    public void executeJob(Job job) {
+        try {
+            job.getAlgorithm().execute(job.getVariables());
+        } catch (Exception e) {
+            Logger.output(Logger.FATAL, job.getInstance().getName() + ": cannot evaluate algorithm: "
+                    + job.getAlgorithm().getName() + System.getProperty("line.separator") + "\t"
+                    + e.getMessage());
+            stop();
+        }
+        ((BasicFbInstance) job.getInstance()).finishedJob(job);
+    }
 }

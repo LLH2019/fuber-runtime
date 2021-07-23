@@ -25,52 +25,52 @@ import com.llh.fuber.runtime.instance.ServiceFbInstance;
 
 public class ReaderThread extends Thread {
 
-private int inputSignal;
-private boolean serviceActive = true;
-private ServiceFbInstance serviceFb;
+    private int inputSignal;
+    private boolean serviceActive = true;
+    private ServiceFbInstance serviceFb;
 
-//==============================================================================
-public ReaderThread(ServiceFbInstance fb) {
-    setName("ReaderThread");
-    serviceFb = fb;
-}
-//==============================================================================
-
-public synchronized void readInput(int input) {
-    inputSignal = input;
-    notifyAll();
-}
-
-public synchronized void deactivateService() {
-    Logger.output(Logger.DEBUG, "ReaderThread.deactivateService()");
-    serviceActive = false;
-    notifyAll();
-}
-
-public synchronized void run() {
-    while (serviceActive) {
-        try {
-            wait();
-        } catch (InterruptedException e) {
-            Logger.output(Logger.ERROR, "ReaderThread.run(): " +
-                                        "caught InterruptedException");
-            e.printStackTrace();
-        }
-
-        // read signal from the Digital I/O card.
-        Logger.output(Logger.DEBUG,
-                "ReaderThread(" + serviceFb.getName() + ").run(): " +
-                "reading input:" + inputSignal);
-
-        // set data output to read value
-        serviceFb.setVariableValue("VALUE", "true");
-
-        // send output event
-        Logger.output(Logger.DEBUG,
-                      "ReaderThread(" + serviceFb.getName() + ").run(): " +
-                      "sending CNF event");
-        serviceFb.sendEvent("CNF");
+    //==============================================================================
+    public ReaderThread(ServiceFbInstance fb) {
+        setName("ReaderThread");
+        serviceFb = fb;
     }
-}
+    //==============================================================================
+
+    public synchronized void readInput(int input) {
+        inputSignal = input;
+        notifyAll();
+    }
+
+    public synchronized void deactivateService() {
+        Logger.output(Logger.DEBUG, "ReaderThread.deactivateService()");
+        serviceActive = false;
+        notifyAll();
+    }
+
+    public synchronized void run() {
+        while (serviceActive) {
+            try {
+                wait();
+            } catch (InterruptedException e) {
+                Logger.output(Logger.ERROR, "ReaderThread.run(): " +
+                                            "caught InterruptedException");
+                e.printStackTrace();
+            }
+
+            // read signal from the Digital I/O card.
+            Logger.output(Logger.DEBUG,
+                    "ReaderThread(" + serviceFb.getName() + ").run(): " +
+                    "reading input:" + inputSignal);
+
+            // set data output to read value
+            serviceFb.setVariableValue("VALUE", "true");
+
+            // send output event
+            Logger.output(Logger.DEBUG,
+                          "ReaderThread(" + serviceFb.getName() + ").run(): " +
+                          "sending CNF event");
+            serviceFb.sendEvent("CNF");
+        }
+    }
 }
 
