@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<System xmlns="http://www.holobloc.com/xml/LibraryElement" Name="Example4" >
+  <VersionInfo  Author="Goran Cengic" Organization="Chalmers" Version="1.0" Date="2008-11-23" />
+  <Device  Name="Test Device" Type="DeviceType_not_used">
+    <Resource Name="TestResource" Type="ResourceType_not_used">
+      <FBNetwork>
+
+	      <FB Name="restart" Type="E_RESTART" />
+	      <FB Name="merge" Type="E_MERGE2" />
+
+		  <FB Name="split" Type="E_SPLIT2" />
+		  <FB Name="rend" Type="E_REND" />
+
+
+		  <FB Name="prod1" Type="Product1" />
+		  <FB Name="prod2" Type="Product2" />
+
+		  <FB Name="res1" Type="Resource1" />
+		  <FB Name="res2" Type="Resource1" />
+		  <FB Name="res3" Type="Resource2" />
+
+		  <EventConnections>
+			  <Connection Source="restart.COLD" Destination="merge.EI1" />
+			  <Connection Source="merge.EO" Destination="split.EI" />
+			  <Connection Source="split.EO1" Destination="prod1.make" />
+			  <Connection Source="split.EO2" Destination="prod2.make" />
+
+			  <!-- Product 1 -->
+			  <Connection Source="prod1.takeR1" Destination="res1.take1" />
+			  <Connection Source="prod1.takeR2" Destination="res2.take1" />
+			  <Connection Source="prod1.takeR3" Destination="res3.take1" />
+
+			  <Connection Source="prod1.releaseR1" Destination="res1.release1" />
+			  <Connection Source="prod1.releaseR2" Destination="res2.release1" />
+			  <Connection Source="prod1.releaseR3" Destination="res3.release1" />
+
+			  <Connection Source="res1.taken1" Destination="prod1.gotR1" />
+			  <Connection Source="res2.taken1" Destination="prod1.gotR2" />
+			  <Connection Source="res3.taken1" Destination="prod1.gotR3" />
+
+
+			  <!-- Product 2 -->
+			  <Connection Source="prod2.takeR1" Destination="res1.take2" />
+			  <Connection Source="prod2.takeR2" Destination="res2.take2" />
+			  <Connection Source="prod2.takeR3" Destination="res3.take2" />
+
+			  <Connection Source="prod2.releaseR1" Destination="res1.release2" />
+			  <Connection Source="prod2.releaseR2" Destination="res2.release2" />
+			  <Connection Source="prod2.releaseR3" Destination="res3.release2" />
+
+			  <Connection Source="res1.taken2" Destination="prod2.gotR1" />
+			  <Connection Source="res2.taken2" Destination="prod2.gotR2" />
+			  <Connection Source="res3.taken2" Destination="prod2.gotR3" />
+
+			  
+			  <Connection Source="prod1.done" Destination="rend.EI1" />
+			  <Connection Source="prod2.done" Destination="rend.EI2" />
+			  <Connection Source="rend.EO" Destination="merge.EI2" />
+
+          </EventConnections>
+      </FBNetwork>
+    </Resource>
+  </Device>
+</System>

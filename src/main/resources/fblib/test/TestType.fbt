@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FBType xmlns="http://www.holobloc.com/xml/LibraryElement" Name="TestType" >
+  <VersionInfo Author="Goran Cengic" Organization="Chalmers" Version="1.0" Date="2005-04-08" />
+  <InterfaceList>
+    <EventInputs>
+      <Event Name="EI" >
+        <With Var="DI" />
+      </Event>
+    </EventInputs>
+    <EventOutputs>
+      <Event Name="EO" >
+        <With Var="DO" />
+      </Event>
+      <Event Name="STOP" />
+    </EventOutputs>
+    <InputVars>
+      <VarDeclaration Name="DI" Type="INT" />
+    </InputVars>
+    <OutputVars>
+      <VarDeclaration Name="DO" Type="INT" />
+    </OutputVars>
+  </InterfaceList>
+  <BasicFB>
+    <InternalVars>
+        <VarDeclaration Name="invoked" Type="INT" />
+    </InternalVars>
+    <ECC>
+        <ECState Name="INIT">
+		    <ECAction Algorithm="PrintVars"/>
+	    </ECState>    
+        <ECState Name="STATE">
+		    <ECAction Algorithm="IncrementVars" Output="EO"/>
+	    </ECState>    
+        <ECState Name="STOP">
+          <ECAction Output="STOP"/>
+        </ECState>
+		<ECTransition Source="INIT" Destination="STATE" Condition="EI" />
+    <ECTransition Source="STATE" Destination="INIT" Condition="invoked &lt; 5" />
+    <ECTransition Source="STATE" Destination="STOP" Condition="invoked &gt;= 5" />
+    <ECTransition Source="STOP" Destination="INIT" Condition="1" />
+    </ECC>
+    <Algorithm Name="IncrementVars">
+    <Other Language="Java" Text="
+      invoked = invoked + 1;
+      DO = DI + 1;
+    "/>	
+    </Algorithm>
+    <Algorithm Name="PrintVars">
+    <Other Language="Java" Text="
+      System.out.println(&quot;invoked: &quot; + invoked);
+      System.out.println(&quot;DO: &quot; + DO);
+    "/>	
+    </Algorithm>
+  </BasicFB>
+</FBType>

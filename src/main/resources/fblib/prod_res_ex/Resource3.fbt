@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FBType xmlns="http://www.holobloc.com/xml/LibraryElement" Name="Resource3" >
+
+  <VersionInfo Author="Goran Cengic" Organization="Chalmers" Version="1.0" Date="2008-11-12" />
+
+  <InterfaceList>
+
+    <EventInputs>
+      <Event Name="take1"/>
+      <Event Name="take2"/>
+      <Event Name="release1" />
+      <Event Name="release2" />
+    </EventInputs>
+
+    <EventOutputs>
+      <Event Name="taken1" />
+      <Event Name="taken2" />
+    </EventOutputs>
+
+	<InputVars>
+      <VarDeclaration Name="cap" Type="INT" />
+    </InputVars>
+
+  </InterfaceList>
+
+  <BasicFB>
+
+    <ECC>
+        <ECState Name="mINIT" />
+        <ECState Name="mS1" >
+		    <ECAction Output="taken1"/>
+	    </ECState>    	
+        <ECState Name="mS2" >
+		    <ECAction Output="taken2"/>
+	    </ECState>    	
+        <ECState Name="mS12" >
+		    <ECAction Output="taken2"/>
+	    </ECState>    	
+        <ECState Name="mS21" >
+		    <ECAction Output="taken1"/>
+	    </ECState>
+        <ECState Name="mS2g" >
+		    <ECAction Output="taken2"/>
+	    </ECState>    	
+        <ECState Name="mS1g" >
+		    <ECAction Output="taken1"/>
+	    </ECState>    	
+
+		<ECTransition Source="mINIT" Destination="mS1" Condition="take1 AND (cap=1 OR cap=2)" />
+		<ECTransition Source="mS1" Destination="mS1" Condition="take1" />
+		<ECTransition Source="mS1" Destination="mS2g" Condition="release1" />
+		<ECTransition Source="mS2g" Destination="mS2g" Condition="take2" />
+		<ECTransition Source="mS2g" Destination="mINIT" Condition="release2" />
+
+		<ECTransition Source="mINIT" Destination="mS2" Condition="take2 AND (cap=1 OR cap=2)" />
+		<ECTransition Source="mS2" Destination="mS2" Condition="take2" />
+		<ECTransition Source="mS2" Destination="mS1g" Condition="release2" />
+		<ECTransition Source="mS1g" Destination="mS1g" Condition="take1" />
+		<ECTransition Source="mS1g" Destination="mINIT" Condition="release1" />
+
+		<ECTransition Source="mS1" Destination="mS12" Condition="take2 AND (cap=2)" />
+		<ECTransition Source="mS12" Destination="mS12" Condition="take2" />
+		<ECTransition Source="mS12" Destination="mS2g" Condition="release1" />
+		<ECTransition Source="mS12" Destination="mS1g" Condition="release2" />
+
+		<ECTransition Source="mS2" Destination="mS21" Condition="take1 AND (cap=2)" />
+		<ECTransition Source="mS21" Destination="mS21" Condition="take1" />
+		<ECTransition Source="mS21" Destination="mS1g" Condition="release2" />
+		<ECTransition Source="mS21" Destination="mS2g" Condition="release1" />
+    </ECC>
+
+  </BasicFB>
+</FBType>

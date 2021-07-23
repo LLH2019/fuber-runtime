@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FBType xmlns="http://www.holobloc.com/xml/LibraryElement" Name="Resource1" >
+
+  <VersionInfo Author="Goran Cengic" Organization="Chalmers" Version="1.0" Date="2008-11-05" />
+
+  <InterfaceList>
+
+    <EventInputs>
+      <Event Name="take1"/>
+      <Event Name="take2"/>
+      <Event Name="release1" />
+      <Event Name="release2" />
+    </EventInputs>
+
+    <EventOutputs>
+      <Event Name="taken1" />
+      <Event Name="taken2" />
+    </EventOutputs>
+
+  </InterfaceList>
+
+  <BasicFB>
+
+    <ECC>
+        <ECState Name="mINIT" />
+        <ECState Name="S1" >
+		    <ECAction Output="taken1"/>
+	    </ECState>    	
+        <ECState Name="S2" >
+		    <ECAction Output="taken2"/>
+	    </ECState>    	
+		<!-- state after single place resource is given to product 2 -->
+        <ECState Name="S2g" >
+		    <ECAction Output="taken2"/>
+	    </ECState>    	
+		<!-- state after single place resource is given to product 1 -->
+        <ECState Name="S1g" >
+		    <ECAction Output="taken1"/>
+	    </ECState>    	
+
+		<ECTransition Source="mINIT" Destination="S1" Condition="take1" />
+		<ECTransition Source="S1" Destination="S2g" Condition="release1" />
+		<ECTransition Source="S2g" Destination="S2g" Condition="take2" />
+		<ECTransition Source="S2g" Destination="mINIT" Condition="release2" />
+
+		<ECTransition Source="mINIT" Destination="S2" Condition="take2" />
+		<ECTransition Source="S2" Destination="S1g" Condition="release2" />
+		<ECTransition Source="S1g" Destination="S1g" Condition="take1" />
+		<ECTransition Source="S1g" Destination="mINIT" Condition="release1" />
+    </ECC>
+
+  </BasicFB>
+</FBType>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FBType xmlns="http://www.holobloc.com/xml/LibraryElement" Name="SimpleTestType2" >
+  <VersionInfo Author="Goran Cengic" Organization="Chalmers" Version="1.0" Date="2008-12-19" />
+  <InterfaceList>
+    <EventInputs>
+      <Event Name="EI">
+        <With Var="DI"/>
+      </Event>
+      <Event Name="EI2"/>
+    </EventInputs>
+    <EventOutputs>
+      <Event Name="EO">
+        <With Var="DO"/>
+      </Event>
+      <Event Name="EO2"/>
+    </EventOutputs>
+    <InputVars>
+      <VarDeclaration Name="DI" Type="INT"/>
+    </InputVars>
+    <OutputVars>
+      <VarDeclaration Name="DO" Type="INT"/>
+    </OutputVars>
+  </InterfaceList>
+  <BasicFB>
+    <InternalVars>
+        <VarDeclaration Name="invoked" Type="INT"/>
+    </InternalVars>
+    <ECC>
+        <ECState Name="mINIT"/>
+        <ECState Name="STATE">
+		    <ECAction Algorithm="TestAlg1" Output="EO"/>
+		    <ECAction Output="EO2"/>
+	    </ECState>    
+		<ECTransition Source="mINIT" Destination="STATE" Condition="EI" />
+		<ECTransition Source="STATE" Destination="mINIT" Condition="1" />
+    </ECC>
+    <Algorithm Name="TestAlg1">
+    <Other Language="Java" Text=
+	"invoked++;
+	DO = DI + 1;
+	System.out.println(&#34;TestAlg:invoked: &#34; + invoked + &#34; times.&#34;);
+	System.out.println(&#34;TestAlg: DO: &#34; + DO + &#34;.&#34;);"
+	/>	
+    </Algorithm>
+  </BasicFB>
+</FBType>

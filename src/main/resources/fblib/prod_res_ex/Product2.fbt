@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FBType xmlns="http://www.holobloc.com/xml/LibraryElement" Name="Product2" >
+
+  <VersionInfo Author="Goran Cengic" Organization="Chalmers" Version="1.0" Date="2008-11-05" />
+
+  <InterfaceList>
+
+    <EventInputs>
+      <Event Name="make"/>
+      <Event Name="gotR1" />
+      <Event Name="gotR2" />
+      <Event Name="gotR3" />
+    </EventInputs>
+
+    <EventOutputs>
+      <Event Name="takeR1" />
+      <Event Name="takeR2" />
+      <Event Name="takeR3" />
+      <Event Name="releaseR1" />
+      <Event Name="releaseR2" />
+      <Event Name="releaseR3" />
+      <Event Name="done" />
+    </EventOutputs>
+
+  </InterfaceList>
+
+  <BasicFB>
+
+    <ECC>
+        <ECState Name="mINIT" />
+        <ECState Name="S1" >
+		    <ECAction Output="takeR3"/>
+	    </ECState>    	
+        <ECState Name="S2" >
+		    <ECAction Output="takeR2"/>
+	    </ECState>    	
+        <ECState Name="S3" >
+		    <ECAction Output="releaseR3"/>
+		    <ECAction Output="takeR1"/>
+	    </ECState>    	
+        <ECState Name="S4" >
+		    <ECAction Output="releaseR2"/>
+		    <ECAction Output="releaseR1"/>
+		    <ECAction Output="done"/>
+	    </ECState>    	
+
+		<ECTransition Source="mINIT" Destination="S1" Condition="make" />
+		<ECTransition Source="S1" Destination="S2" Condition="gotR3" />
+		<ECTransition Source="S2" Destination="S3" Condition="gotR2" />
+		<ECTransition Source="S3" Destination="S4" Condition="gotR1" />
+		<ECTransition Source="S4" Destination="mINIT" Condition="1" />
+    </ECC>
+  </BasicFB>
+</FBType>

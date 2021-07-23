@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FBType xmlns="http://www.holobloc.com/xml/LibraryElement" Name="Resource2" >
+
+  <VersionInfo Author="Goran Cengic" Organization="Chalmers" Version="1.0" Date="2008-11-05" />
+
+  <InterfaceList>
+    <EventInputs>
+      <Event Name="take1"/>
+      <Event Name="take2"/>
+      <Event Name="release1" />
+      <Event Name="release2" />
+    </EventInputs>
+
+    <EventOutputs>
+      <Event Name="taken1" />
+      <Event Name="taken2" />
+    </EventOutputs>
+  </InterfaceList>
+
+  <BasicFB>
+    <ECC>
+        <ECState Name="mINIT" />
+        <ECState Name="S1" >
+		    <ECAction Output="taken1"/>
+	    </ECState>    	
+        <ECState Name="S2" >
+		    <ECAction Output="taken2"/>
+	    </ECState>    	
+        <ECState Name="S12" >
+		    <ECAction Output="taken2"/>
+	    </ECState>    	
+        <ECState Name="S21" >
+		    <ECAction Output="taken1"/>
+	    </ECState>    	
+
+		<ECTransition Source="mINIT" Destination="S1" Condition="take1" />
+		<ECTransition Source="S1" Destination="mINIT" Condition="release1" />
+		<ECTransition Source="S1" Destination="S12" Condition="take2" />
+		<ECTransition Source="S12" Destination="S1" Condition="release2" />
+		<ECTransition Source="S12" Destination="S2" Condition="release1" />
+
+		<ECTransition Source="mINIT" Destination="S2" Condition="take2" />
+		<ECTransition Source="S2" Destination="mINIT" Condition="release2" />
+		<ECTransition Source="S2" Destination="S21" Condition="take1" />
+		<ECTransition Source="S21" Destination="S2" Condition="release1" />
+		<ECTransition Source="S21" Destination="S1" Condition="release2" />
+
+    </ECC>
+  </BasicFB>
+</FBType>

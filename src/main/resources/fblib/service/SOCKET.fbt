@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FBType xmlns="http://www.holobloc.com/xml/LibraryElement" Name="SOCKET">
+  <VersionInfo Author="Goran Cengic" Organization="Chalmers" Version="1.0" Date="2006-08-11" />
+  <InterfaceList>
+    <EventInputs>
+      <Event Name="RECEIVE"/>
+      <Event Name="SEND">
+        <With Var="OUT"/>
+      </Event>
+    </EventInputs>
+    <EventOutputs>
+      <Event Name="SENT"/>
+      <Event Name="RECEIVED">
+        <With Var="IN" />
+      </Event>
+    </EventOutputs>
+    <InputVars>
+      <VarDeclaration Name="OUT" Type="String"/>
+    </InputVars>
+    <OutputVars>
+      <VarDeclaration Name="IN" Type="String"/> 
+    </OutputVars>
+  </InterfaceList>
+</FBType>

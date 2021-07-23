@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FBType xmlns="http://www.holobloc.com/xml/LibraryElement" Name="E_CYCLE" >
+  <VersionInfo Author="Goran Cengic" 
+               Organization="Chalmers"
+               Version="1.0"
+               Remarks="Released under the GNU General Public License (GLP)."
+               Date="2005-06-24" />
+  <InterfaceList>
+    <EventInputs>
+      <Event Name="START" >
+        <With Var="DT" />
+      </Event>
+	  <Event Name="STOP" />
+    </EventInputs>
+    <EventOutputs>
+      <Event Name="EO" />
+    </EventOutputs>
+    <InputVars>
+      <VarDeclaration Name="DT" Type="INT" />
+    </InputVars>
+  </InterfaceList>
+  <FBNetwork>
+        <FB Name="merge" Type="E_MERGE2" />
+        <FB Name="delay" Type="E_DELAY" />
+        <FB Name="split" Type="E_SPLIT2" />
+        <EventConnections>
+          <Connection Source="START" Destination="merge.EI1" />
+          <Connection Source="merge.EO" Destination="delay.START" />
+          <Connection Source="delay.EO" Destination="split.EI" />
+          <Connection Source="split.EO1" Destination="merge.EI2" />		  
+          <Connection Source="split.EO2" Destination="EO" />		  
+          <Connection Source="STOP" Destination="delay.STOP" />		  
+        </EventConnections>
+		<DataConnections>
+          <Connection Source="DT" Destination="delay.DT" />
+        </DataConnections>
+      </FBNetwork>
+</FBType>

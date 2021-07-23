@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<System xmlns="http://www.holobloc.com/xml/LibraryElement" Name="Test ECC System" >
+  <VersionInfo  Author="Goran Cengic" Organization="Chalmers" Version="1.0" Date="2008-04-21" />
+  <Device  Name="Test Device" Type="DeviceType_not_used">
+    <Resource Name="Test Resource" Type="ResourceType_not_used">
+      <FBNetwork>
+        <FB Name="restart" Type="E_RESTART" />
+        <FB Name="stop" Type="E_STOP" />
+        <FB Name="test" Type="TestECC" />
+        <EventConnections>
+          <Connection Source="restart.COLD" Destination="test.EI" />
+          <Connection Source="test.EO" Destination="stop.STOP" />
+        </EventConnections>
+      </FBNetwork>
+    </Resource>
+  </Device>
+</System>

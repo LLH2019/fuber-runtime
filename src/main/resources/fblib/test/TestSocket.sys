@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<System xmlns="http://www.holobloc.com/xml/LibraryElement" Name="Test System" >
+  <VersionInfo  Author="Goran Cengic" Organization="Chalmers" Version="1.0" Date="2005-06-15" />
+  <Device  Name="Test Device" Type="DeviceType_not_used">
+    <Resource Name="Test Resource" Type="ResourceType_not_used">
+      <FBNetwork>
+        <FB Name="restart" Type="E_RESTART" />
+        <FB Name="split" Type="E_SPLIT2" />
+        <FB Name="socket" Type="SOCKET" />
+        <FB Name="print" Type="Print" />
+        <FB Name="stop" Type="E_STOP" />
+        <EventConnections>
+          <Connection Source="restart.COLD" Destination="socket.SEND" />
+          <Connection Source="socket.SENT" Destination="socket.RECEIVE" />
+          <Connection Source="socket.RECEIVED" Destination="print.PRINT" />
+          <Connection Source="print.DONE" Destination="stop.STOP" />
+        </EventConnections>
+        <DataConnections>
+          <Connection Source="Blah blah blah!" Destination="socket.OUT" />
+          <Connection Source="socket.IN" Destination="print.TEXT" />
+        </DataConnections>
+      </FBNetwork>
+    </Resource>
+  </Device>
+</System>

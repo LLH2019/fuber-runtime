@@ -1,0 +1,53 @@
+/*
+ *   This file is part of Fuber (Function Block Execution Runtime) library.
+ *   Copyright (C) 2006-2021 Goran Cengic
+ *
+ *   This library is free software; you can redistribute it and/or
+ *   modify it under the terms of the GNU Lesser General Public
+ *   License as published by the Free Software Foundation; either
+ *   version 2.1 of the License, or (at your option) any later version.
+ *
+ *   This library is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *   Lesser General Public License for more details.
+ *
+ *   You should have received a copy of the GNU Lesser General Public
+ *   License along with this library; if not, write to the Free Software
+ *   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ *
+ *   To contact author please refer to contact information in the README file.
+ */
+import net.sourceforge.fuber.*;
+import net.sourceforge.fuber.services.DelayService;
+
+
+ServiceFbInstance serviceFb = (ServiceFbInstance) serviceFb;
+Map serviceState = (Map) serviceState;
+Event serviceEvent = (Event) serviceEvent;
+Variables serviceVariables = (Variables) serviceVariables;
+
+if (serviceInitialize) {
+    Logger.output(Logger.DEBUG, "E_DELAY.bsh(" + serviceFb.getName() + "): initialization");
+
+    serviceState = new HashMap();
+
+    DelayService delayService = new DelayService(serviceFb);
+    serviceState.put("delayService", delayService);
+
+} else if (serviceFinalize) {
+    Logger.output(Logger.DEBUG, "E_DELAY.bsh(" + serviceFb.getName() + "): finalization");
+
+} else {
+    String eventName  = ((Event) serviceEvent).getName();
+
+    if (eventName.equals("START")) {
+        Logger.output(Logger.DEBUG, "E_DELAY.bsh(" + serviceFb.getName() + "): START received");
+        int delayTime = ((IntegerVariable) serviceVariables.getVariable("DT")).getValue().intValue();
+        serviceState.get("delayService").startDelay(delayTime);
+
+    } else if (eventName.equals("STOP")) {
+        Logger.output(Logger.DEBUG, "E_DELAY.bsh(" + serviceFb.getName() + "): STOP received");
+        serviceState.get("delayService").stopDelay();
+    }
+}

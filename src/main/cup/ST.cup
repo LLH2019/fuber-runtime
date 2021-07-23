@@ -1,0 +1,219 @@
+/*
+ *   This file is part of Fuber (Function Block Execution Runtime) library.
+ *   Copyright (C) 2006-2021 Goran Cengic
+ *
+ *   This library is free software; you can redistribute it and/or
+ *   modify it under the terms of the GNU Lesser General Public
+ *   License as published by the Free Software Foundation; either
+ *   version 2.1 of the License, or (at your option) any later version.
+ *
+ *   This library is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *   Lesser General Public License for more details.
+ *
+ *   You should have received a copy of the GNU Lesser General Public
+ *   License along with this library; if not, write to the Free Software
+ *   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ *
+ *   To contact author please refer to contact information in the README file.
+ */
+// CUP specification for the IEC 61131-3 ST language
+
+package com.llh.fuberruntime.interpreters.st;
+
+import com.llh.fuberruntime.interpreters.abstractsyntax.*;
+
+/* Terminals (tokens returned by the scanner). */
+terminal            STATE;
+terminal            ASSIGN;
+// terminal            IF, THEN, ELSIF, ELSE, ENDIF;
+terminal            OR, XOR, AND;
+terminal            EQ, NEQ;
+terminal            LESS, LESSEQ, MORE, MOREEQ;
+terminal            PLUS, MINUS;
+terminal            TIMES, DIV, MOD;
+terminal            POWER;
+terminal            UMINUS;
+terminal            NOT;
+terminal            LPAREN, RPAREN;
+terminal String	    STRING;
+terminal Integer    INT;
+terminal Double     DOUBLE;
+terminal Boolean    BOOL;
+terminal String     IDENT;
+
+/* Non terminals */
+non terminal Goal                   goal;
+non terminal StatementList          statement_list;
+non terminal Statement              statement;
+non terminal AssignmentStatement    assignment_statement;
+non terminal Expression             expression;
+non terminal XorExpression          xor_expression;
+non terminal AndExpression          and_expression;
+non terminal Comparison             comparison;
+non terminal AddExpression          add_expression;
+non terminal Term                   term;
+non terminal PowerExpression        power_expression;
+non terminal UnaryExpression        unary_expression;
+non terminal PrimaryExpression      primary_expression;
+non terminal Identifier             identifier;
+
+/* Precedences */
+// precedence left         OR;
+// precedence left         XOR;
+// precedence left         AND;
+precedence left         NOT;
+precedence nonassoc     EQ,NEQ,LESS,LESSEQ,MORE,MOREEQ;
+precedence left         PLUS,  MINUS;
+precedence left         TIMES, DIV, MOD;
+precedence left         POWER;
+precedence left         UMINUS;
+
+
+/* The grammar */
+
+start with goal;
+
+goal ::=
+    statement_list:a
+        {: RESULT = new StatementList(a, null); :}
+    | expression:a 
+        {: RESULT = new Expression(a, null); :}
+    ;
+
+statement_list ::= 
+    statement_list:a statement:b
+        {: RESULT = new StatementList(a,b); :}
+    | statement:a
+        {: RESULT = new StatementList(null,a); :}
+    ;
+
+statement ::=
+    assignment_statement:a
+        {: RESULT = a; :}
+//  |
+//  selection_statement
+    ;
+
+assignment_statement ::=
+    identifier:a ASSIGN expression:b STATE
+        {: RESULT = new AssignmentStatement(a,b); :}
+    ;
+
+/*
+selection_statement ::=
+    if_statement
+    ;
+
+if_statement ::=
+    IF expression THEN statement_list elsif_statment_list ENDIF
+    |
+    IF expression THEN statement_list  elsif_statment_list ELSE statement_list ENDIF
+    ;
+
+elsif_statement_list ::=
+    elsif_statement_list elsif_statement
+    |
+    empty
+    ;
+
+elsif_statement ::=
+    ELSIF expression THEN statement_list
+    ;
+*/
+
+expression ::=
+    expression:a OR xor_expression:b
+        {: RESULT = new Expression(a,b); :}
+    | xor_expression:a
+        {: RESULT = new Expression(null,a); :}
+    ;
+
+xor_expression ::=
+    xor_expression:a XOR and_expression:b
+        {: RESULT = new XorExpression(a,b); :}
+    | and_expression:a
+        {: RESULT = new XorExpression(null,a); :}
+    ;
+
+and_expression ::=
+    and_expression:a AND comparison:b
+        {: RESULT = new AndExpression(a,b); :}
+    | comparison:a
+        {: RESULT = new AndExpression(null,a); :}
+    ;
+
+comparison ::=
+    add_expression:a EQ add_expression:b
+        {: RESULT = new Eq(a,b); :}
+    | add_expression:a NEQ add_expression:b
+        {: RESULT = new Neq(a,b); :}
+    | add_expression:a LESS add_expression:b
+        {: RESULT = new Less(a,b); :}
+    | add_expression:a LESSEQ add_expression:b
+        {: RESULT = new LessEq(a,b); :}
+    | add_expression:a MORE add_expression:b
+        {: RESULT = new More(a,b); :}
+    | add_expression:a MOREEQ add_expression:b
+        {: RESULT = new MoreEq(a,b); :}
+    | add_expression:a
+        {: RESULT = new NoComparison(a); :}
+    ;
+
+add_expression ::=
+    add_expression:a PLUS add_expression:b
+        {: RESULT = new Plus(a,b); :}
+    | add_expression:a MINUS add_expression:b
+        {: RESULT = new Minus(a,b); :}
+    | term:a
+        {: RESULT = new NoAddExpression(a); :}
+    ;
+
+term ::=
+    term:a TIMES term:b
+        {: RESULT = new Times(a,b); :}
+    | term:a DIV term:b
+        {: RESULT = new Div(a,b); :}
+    | term:a MOD term:b
+        {: RESULT = new Mod(a,b); :}
+    | power_expression:a
+        {: RESULT = new NoTerm(a); :}
+    ;
+
+power_expression ::=
+    power_expression:a POWER unary_expression:b
+        {: RESULT = new PowerExpression(a,b); :}
+    | unary_expression:a
+        {: RESULT = new  PowerExpression(null,a); :}
+    ;
+
+unary_expression ::= 
+    LPAREN expression:a RPAREN
+        {: RESULT = new UnaryExpressionExpression(a); :}
+    | MINUS unary_expression:a
+        {: RESULT = new UnaryMinus(a); :} %prec UMINUS
+    | NOT unary_expression:a
+        {: RESULT = new UnaryNot(a); :} %prec NOT
+    | primary_expression:a
+        {: RESULT = new NoUnaryExpression(a); :}
+    ;
+
+
+primary_expression ::= 
+    identifier:a
+        {: RESULT = a; :}
+    | STRING:a
+        {: RESULT = new PrimaryString(a); :}
+    | INT:a
+        {: RESULT = new PrimaryInt(a); :}
+    | DOUBLE:a
+        {: RESULT = new PrimaryDouble(a); :}
+    | BOOL:a
+        {: RESULT = new PrimaryBool(a); :}
+    ;
+
+identifier ::= 
+    IDENT:a
+        {: RESULT = new Identifier(a); :}
+    ;
